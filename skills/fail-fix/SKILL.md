@@ -44,7 +44,7 @@ triage.
 2. The harness checkout at the failing revision.
 3. The asserting function name (from the traceback).
 4. How harness tests are run (`pytest`, `unittest`, or a runner script).
-5. Any extras the user also wants — so you can decline them cleanly.
+5. Any extras the user also wants.
 
 ## Sources of truth
 
@@ -184,9 +184,3 @@ Not covered:     <honest gap, or none>
 - `scripts/check_fix_scope.py` — inspect-only AST scope check (stdlib). Compares
   before/after module copies; rejects signature changes, neighbor edits, XML
   touches, and oversized diffs.
-
-## Applying in a real checkout
-
-This skill is a template. Point it at the failing log and harness (or the
-Python symbol) in the Diags tree you have open. It does not ship stand-in
-fixtures; do not invent a fake repo just to run it.

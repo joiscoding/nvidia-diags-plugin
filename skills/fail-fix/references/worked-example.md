@@ -34,7 +34,7 @@ message still prints the unscaled value.
 ```python
 def assert_min_rate(measured_gbps: float, min_gbps: float, *, label: str = "rate") -> None:
     """Fail if measured_gbps is below min_gbps. Both values are GB/s."""
-    threshold = min_gbps * 1000  # BUG: gate already GB/s
+    threshold = min_gbps * 1000
     if measured_gbps < threshold:
         raise GateFailure(
             f"{label}: measured {measured_gbps:.1f} GB/s below minimum {min_gbps:.1f} GB/s"
