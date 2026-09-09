@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Stand-in fixture. Replace with a real authoritative sibling. -->
+<!-- Example sibling with placeholder values. -->
 <flow name="stage_b_firmware" stop_on_first_failure="true">
   <vars>
     <var name="SKU_ID" value="sku_alpha" />

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Incomplete target with deliberately different product values. -->
+<!-- Example target with values that differ from the sibling. -->
 <flow name="stage_b_firmware" stop_on_first_failure="true">
   <vars>
     <var name="SKU_ID" value="sku_beta" />
