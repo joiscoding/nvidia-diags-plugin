@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Incomplete target with deliberately different product values. -->
+<flow name="stage_b_firmware" stop_on_first_failure="true">
+  <vars>
+    <var name="SKU_ID" value="sku_beta" />
+    <var name="WANT_ADAPTER_FW" value="13.7.42" />
+    <var name="UPDATE_ADAPTER" value="yes" />
+    <var name="UPDATE_CARD" value="yes" />
+    <var name="EXPECT_ADAPTERS" value="2" />
+    <var name="MEM_BANDWIDTH_MIN_GBPS" value="640" />
+  </vars>
+
+  <step id="HOST_IMAGE_VERSION" code="E120" on_fail="COLLECT_LOGS"><![CDATA[
+RESULT PASS
+  ]]></step>
+
+  <step id="CARD_FIRMWARE_UPDATE" when="${UPDATE_CARD} == 'yes'" code="E131" on_fail="COLLECT_LOGS" on_skip="BUS_TOPOLOGY"><![CDATA[
+RESULT PASS
+  ]]></step>
+
+  <step id="BUS_TOPOLOGY" code="E140" on_fail="COLLECT_LOGS"><![CDATA[
+RESULT PASS
+  ]]></step>
+
+  <step id="COLLECT_LOGS" code="E900" on_pass="stop" on_fail="stop"><![CDATA[
+echo "ERROR: firmware flow failed"
+RESULT FAIL
+  ]]></step>
+
+  <step id="COMPLETE" on_pass="stop"><![CDATA[
+RESULT PASS
+  ]]></step>
+</flow>
