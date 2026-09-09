@@ -1,0 +1,11 @@
+{
+  "name": "nvidia-diags",
+  "displayName": "NVIDIA Diags",
+  "version": "0.1.0",
+  "description": "Skills for NVIDIA Diags enablement demos: pattern clone, fail→fix, multi-file rename.",
+  "author": {
+    "name": "Joseph Yang"
+  },
+  "skills": "./skills/",
+  "keywords": ["nvidia", "diags", "skills", "enablement"]
+}
