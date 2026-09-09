@@ -1,0 +1,29 @@
+--- a/target_sku_recipe.xml
++++ b/target_sku_recipe.xml
+@@
+   <step id="HOST_IMAGE_VERSION" code="E120" on_fail="COLLECT_LOGS"><![CDATA[
+ RESULT PASS
+   ]]></step>
+ 
++  <step id="ADAPTER_FIRMWARE_UPDATE" when="${UPDATE_ADAPTER} == 'yes'" code="E601" on_fail="COLLECT_LOGS"><![CDATA[
++adapter_count="$(adapterctl query --count)"
++if [ "$adapter_count" -ne "$EXPECT_ADAPTERS" ]; then
++  echo "ERROR: unexpected adapter count"
++  RESULT FAIL
++fi
++
++current_fw="$(adapterctl query --firmware | sort -u)"
++if [ "$current_fw" = "$WANT_ADAPTER_FW" ]; then
++  RESULT PASS
++fi
++
++if ! adapterctl burn --firmware "$WANT_ADAPTER_FW"; then
++  echo "ERROR: adapter firmware update failed"
++  RESULT FAIL
++fi
++
++SET HOST_REBOOT_NEEDED=yes
++RESULT PASS
++  ]]></step>
++
+   <step id="CARD_FIRMWARE_UPDATE" when="${UPDATE_CARD} == 'yes'" code="E131" on_fail="COLLECT_LOGS" on_skip="BUS_TOPOLOGY"><![CDATA[

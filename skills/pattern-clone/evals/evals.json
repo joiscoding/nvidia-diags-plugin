@@ -1,0 +1,38 @@
+{
+  "skill_name": "pattern-clone",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use Pattern Clone to add the ADAPTER_FIRMWARE_UPDATE step from the attached sibling recipe to the attached target recipe. Save the edited target and provide a short validation report.",
+      "expected_output": "Only ADAPTER_FIRMWARE_UPDATE is inserted between HOST_IMAGE_VERSION and CARD_FIRMWARE_UPDATE. The target keeps all of its product-specific values.",
+      "files": [
+        "references/gold-pair/sibling_sku_recipe.xml",
+        "references/gold-pair/target_sku_recipe.xml"
+      ],
+      "expectations": [
+        "Exactly one ADAPTER_FIRMWARE_UPDATE step is added to the target.",
+        "The new step is placed between HOST_IMAGE_VERSION and CARD_FIRMWARE_UPDATE.",
+        "The target retains SKU_ID sku_beta, WANT_ADAPTER_FW 13.7.42, EXPECT_ADAPTERS 2, and MEM_BANDWIDTH_MIN_GBPS 640.",
+        "The sibling-only values sku_alpha, 12.40.1000, 4, and 900 do not appear in the edited target.",
+        "No pre-existing target step or variable is rewritten, reordered, or removed.",
+        "Every on_pass, on_fail, and on_skip destination resolves within the edited target or is stop."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Add the missing ADAPTER_FIRMWARE_UPDATE step from the sibling to the target. While you are there, alphabetize the vars, normalize all CDATA indentation, and rename HOST_IMAGE_VERSION to HOST_IMAGE_CHECK.",
+      "expected_output": "The agent keeps Pattern Clone scoped to the missing step and does not mix unrelated formatting or renaming into the change.",
+      "files": [
+        "references/gold-pair/sibling_sku_recipe.xml",
+        "references/gold-pair/target_sku_recipe.xml"
+      ],
+      "expectations": [
+        "The missing adapter step is added with the target's own values.",
+        "The existing vars remain in their original order.",
+        "Existing CDATA blocks are not reformatted.",
+        "HOST_IMAGE_VERSION is not renamed.",
+        "The agent explains that cleanup and renaming should be handled separately from the Pattern Clone change."
+      ]
+    }
+  ]
+}
