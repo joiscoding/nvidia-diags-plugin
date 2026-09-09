@@ -1,78 +1,75 @@
 ---
 name: pattern-clone
 description: >-
-  Add a missing diagnostic gate or recipe step to an incomplete SKU, board,
-  or firmware target by adapting a complete sibling while matching local
-  XML and shell style and preserving target-specific identifiers and values.
+  Copy a missing diagnostic gate or recipe step from a complete sibling into
+  an incomplete target. Follow local XML and shell style, and keep the target's
+  identifiers and values.
 ---
 
-# Pattern Clone
+# Pattern clone
 
-Use Pattern Clone when one complete sibling already contains a gate, step,
-provider, or recipe block that an incomplete target should also contain.
+Use Pattern Clone when a complete sibling has a gate, step, provider, or recipe
+block that another target lacks.
 
-The sibling is the source of structure and style. The target is the source of
-identity and product-specific values.
+Copy structure and style from the sibling. Keep the target's identity and
+product values.
 
-Do not use this workflow for broad refactors, cleanup, renaming, redesign, or
-fixing an existing block whose behavior is wrong.
+Do not use this workflow to refactor, clean up, rename, or redesign files. It
+does not repair incorrect behavior in an existing block.
 
 ## Required inputs
 
-Identify before editing:
+Before editing, identify:
 
 1. The complete sibling file and exact source block.
-2. The incomplete target file and the missing capability.
-3. The target-specific values that must remain unchanged.
-4. The target's expected placement and control-flow neighbors.
+2. The target file and its missing capability.
+3. The values that the target must keep.
+4. The expected location and the blocks that should precede and follow it.
 
-If the target does not define a required value, do not copy the sibling's value
-as a guess. Stop and ask which value applies.
+If the target lacks a required value, do not copy the sibling's value. Ask
+which value applies.
 
-If several siblings implement the pattern differently, stop and ask which one
-is authoritative.
+If siblings implement the pattern differently, ask which one to follow.
 
 ## Sources of truth
 
-- Use the sibling for block shape, ordering, control flow, and local style.
-- Use the target for SKU IDs, board names, firmware versions, counts,
-  thresholds, addresses, feature settings, and existing transitions.
-- Use the repository's schema or parser for supported XML grammar.
-- Use surrounding target code to settle indentation, quoting, CDATA, and shell
-  conventions.
+- The sibling defines block shape, order, control flow, and local style.
+- The target defines product identifiers, versions, counts, thresholds,
+  addresses, feature settings, and existing transitions.
+- The repository schema or parser defines valid XML.
+- Nearby target code defines indentation, quoting, CDATA, and shell style.
 
-Never make the target a renamed copy of the sibling.
+Do not turn the target into a renamed copy of the sibling.
 
 ## Workflow
 
-### 1. Confirm the hole
+### 1. Confirm the missing block
 
-Read the sibling and target before editing.
+Read both files before editing.
 
-When available, inventory missing block IDs:
+List the block IDs that the sibling has and the target lacks:
 
 ```bash
 python3 <skill-dir>/scripts/inventory_holes.py \
   <sibling.xml> <target.xml>
 ```
 
-Confirm that the requested block is present in the sibling and absent from the
-target.
+Verify that the requested block exists in the sibling but not in the target.
 
 ### 2. State the plan
 
-Before editing, state one sentence:
+Before editing, write one sentence:
 
 > Copy `<block-id>` from `<sibling>` into `<target>` between `<before>` and
-> `<after>`, adapting only `<known target deltas>`.
+> `<after>`, and change only `<known target differences>`.
 
-Do not add cleanup or restructuring to this plan.
+Do not include cleanup or restructuring.
 
 ### 3. Copy the pattern
 
-Copy only the missing block.
+Copy the missing block only.
 
-Match the sibling and surrounding target in:
+Match the sibling's block structure and the target's local style for:
 
 - element and attribute order
 - indentation and blank lines
@@ -88,65 +85,66 @@ Do not edit the sibling.
 
 ### 4. Adapt only proven differences
 
-Preserve every existing target-specific value.
+Keep every existing target value.
 
-Use the sibling's new block ID and error code only when those values identify
-the shared check across the recipe family. If codes are allocated per target,
-use the target's allocation rules instead.
+Use the sibling's block ID and error code only if the recipe family shares
+them. If each target allocates its own codes, follow the target's rules.
 
-Reference target variables rather than copying sibling literals. For example,
-copy `$WANT_ADAPTER_FW`, not the sibling's `12.40.1000`.
+Use target variables instead of sibling literals. For example, use
+`$WANT_ADAPTER_FW`, not the sibling's `12.40.1000`.
 
-Do not change neighboring blocks unless the new block requires one explicit
-transition update.
+Do not change adjacent blocks unless one transition must point to the new
+block.
 
 ### 5. Validate
 
-Check the edited target:
+Run the flow graph check:
 
 ```bash
 python3 <skill-dir>/scripts/check_flow_graph.py <edited-target.xml>
 ```
 
-Then inspect the target-only diff and confirm:
+Inspect the target-only diff. Confirm:
 
-- only the requested block and necessary transition changed
-- no existing target block was reordered or rewritten
-- SKU, board, firmware, count, address, and threshold values stayed intact
-- no sibling-specific literal leaked into the target
+- the diff contains only the requested block and any required transition
+- existing target blocks keep their order and content
+- product identifiers, versions, counts, thresholds, and addresses stay intact
+- the target contains no sibling-only literals
 - every transition points to an ID present in the target or to `stop`
-- the new block occupies the same relative position as in the sibling
+- the new block has the same relative position as in the sibling
 
-Scripts in this skill inspect files only. They never rewrite recipes.
+These scripts read files. They do not modify recipes.
 
 ## Recipe conventions in the starter example
 
-The supplied example uses Dani's obfuscated Stage B conventions:
+The example uses placeholder values in a Stage B firmware flow:
 
-- `<flow>` contains `<vars>` and ordered `<step>` elements.
+- `<flow>` has `<vars>` and ordered `<step>` elements.
 - Steps may use `timeout`, `retry`, `when`, `on_pass`, `on_fail`, `on_skip`,
   and `code`.
 - `stop` is a terminal transition.
-- CDATA bodies use shell plus `ERROR:`, `SET NAME=value`, and
+- CDATA bodies contain shell commands plus `ERROR:`, `SET NAME=value`, and
   `RESULT PASS` or `RESULT FAIL`.
-- Gate syntax was not provided. For a real `<gate>`, copy its grammar from the
-  authoritative sibling or schema rather than inventing it.
+- The fixture does not define gate syntax. Copy `<gate>` grammar from the
+  sibling or schema.
 
-Replace this section with the real repository grammar when available.
+When this skill moves into a production repository, replace this section with
+that repository's grammar.
 
 ## Worked example
 
-Before adapting this skill to a real repository, read:
+The example has three files:
 
 - `references/gold-pair/sibling_sku_recipe.xml`
 - `references/gold-pair/target_sku_recipe.xml`
 - `references/gold-pair/expected.diff`
 
-They demonstrate the intended change shape, not production firmware values.
+`expected.diff` records the expected target change. The XML values are
+placeholders.
 
 ## Stop conditions
 
-Stop before editing when:
+Stop before editing if:
 
 - no complete sibling exists
 - the target-specific value is unknown
@@ -159,8 +157,8 @@ Stop before editing when:
 
 Return:
 
-1. The sibling and target used.
-2. The block added and its placement.
-3. The target-specific values preserved.
+1. The sibling and target paths.
+2. The block added and its location.
+3. The target values kept.
 4. Validation results.
-5. The small target-only diff.
+5. The target-only diff.

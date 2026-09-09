@@ -1,20 +1,17 @@
-# Pattern Clone evals
+# Pattern clone evals
 
-These are authoring tests for the skill, not runtime instructions.
+These files test skill behavior. They are not runtime instructions.
 
 Each entry in `evals.json` contains:
 
-- `prompt`: the task given to the agent
-- `files`: input files supplied with that task
-- `expected_output`: a short description of success
-- `expectations`: statements used to grade the result
+- `prompt`: the task the agent receives
+- `files`: input files the agent receives
+- `expected_output`: a short description of a correct result
+- `expectations`: statements the grader checks
 
-Run each prompt twice: once with `pattern-clone/SKILL.md` available and once
-without it. Compare whether the skill prevents sibling values, unrelated
-cleanup, and invalid transitions from entering the target.
+Run each prompt once with `pattern-clone/SKILL.md` available and once without
+it. Compare the outputs. With the skill, the agent should not copy sibling-only
+values, make unrelated edits, or create unresolved transitions.
 
-These evals are intended for authoring and grading the skill by comparing
-results with and without the skill enabled.
-
-Do not give `expected.diff` to the executing agent. Reserve it for the grader
-or human reviewer.
+Keep `expected.diff` out of the agent input. It is the answer key for the
+grader.
