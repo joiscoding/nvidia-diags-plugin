@@ -1,10 +1,10 @@
 # Call-site shapes (illustrative)
 
-Placeholder names only: `old_name` → `new_name`, or `m.old` / `m.new`.
-These snippets are examples, not a gold tree. One shape per classification-table
-row from `SKILL.md`.
+Placeholder names only: `old_name` to `new_name`, or `m.old` / `m.new`.
+These snippets are examples, not expected output. One shape per
+classification-table row from `SKILL.md`.
 
-## Definition — Rename
+## Rename definitions
 
 ```python
 # before                         # after
@@ -12,7 +12,7 @@ def old_name(x):                 def new_name(x):
     return x                     return x
 ```
 
-## Import-as — Rename the symbol; leave local alias after `as`
+## Rename import aliases
 
 ```python
 # before                                    # after
@@ -20,7 +20,7 @@ from m import old_name as helper            from m import new_name as helper
 result = helper(1)                          result = helper(1)
 ```
 
-## Attribute call — Rename
+## Rename attribute calls
 
 ```python
 # before                         # after
@@ -28,7 +28,7 @@ import m                         import m
 m.old_name(payload)              m.new_name(payload)
 ```
 
-## `__all__` / `patch.object` string — Rename
+## Rename `__all__` and `patch.object` strings
 
 ```python
 # before                                      # after
@@ -37,17 +37,17 @@ with patch.object(m, "old_name"):             with patch.object(m, "new_name"):
     ...                                       ...
 ```
 
-## Descriptive log string — Rename; list for reviewer veto
+## Rename descriptive log strings
 
 ```python
 # before                                      # after
 logger.info("calling old_name")               logger.info("calling new_name")
 ```
 
-## Derived identifier — Leave alone
+## Leave derived identifiers alone
 
 ```python
-# before (and after — unchanged)
+# before and after, unchanged
 class OldNameTest(unittest.TestCase):
     def test_legacy_old_name_path(self):
         ...
@@ -56,10 +56,10 @@ class OldNameTest(unittest.TestCase):
 Whole-word rename must not turn `OldNameTest` or `legacy_old_name_path` into
 something else. Flag derived names under "Not done".
 
-## External CLI key — Leave alone
+## Leave external CLI keys alone
 
 ```python
-# before (and after — unchanged)
+# before and after, unchanged
 COMMANDS = {
     "run-old": old_name,   # key is an external CLI contract; leave the key
 }
@@ -70,4 +70,4 @@ COMMANDS = {
 ```
 
 Recipe `<step id="...">`, YAML keys, and metric names that merely contain the
-old spelling are also out of scope — list them in the report, do not edit.
+old spelling are also out of scope. List them in the report, do not edit them.

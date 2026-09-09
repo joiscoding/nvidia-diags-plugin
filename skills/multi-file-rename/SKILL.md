@@ -19,19 +19,21 @@ YAML config keys.
 ## When
 
 - Rename one Python symbol used in more than one file:
-  `compute_summary` → `compute_summary_v2`, `ResultRow` → `SummaryRow`,
-  `DEFAULT_BATCH` → `DEFAULT_SUMMARY_BATCH`.
+  `compute_summary` to `compute_summary_v2`, `ResultRow` to `SummaryRow`,
+  `DEFAULT_BATCH` to `DEFAULT_SUMMARY_BATCH`.
 - Callers must update, not just the definition.
 - No behavior change in the same pass.
 
 ## When not
 
-- Recipe XML step ids, recipe keys, YAML config keys — leave untouched; list
-  in the report.
-- Rename plus behavior change — split into two diffs.
-- Renaming a module or moving a file — different blast radius.
-- Repo-wide blind `sed` — inventory first, then per-file edits.
-- Keeping the old name as a compatibility alias — separate API decision.
+- Recipe XML step ids, recipe keys, YAML config keys. Leave them untouched and
+  list them in the report.
+- Rename plus behavior change. Split into two diffs.
+- Renaming a module or moving a file. That changes import paths and review
+  scope.
+- Repo-wide blind `sed`. Inventory first, then edit per file.
+- Keeping the old name as a compatibility alias. That is a separate API
+  decision.
 
 ## Required inputs
 
@@ -55,8 +57,7 @@ YAML config keys.
    change.
 3. **The user's stated scope.** Narrows edits; never widens past the root.
 
-Do not treat an IDE rename as complete — it skips string references. Grep
-anyway.
+Do not treat an IDE rename as complete. It skips string references. Grep anyway.
 
 ## Workflow
 
@@ -95,7 +96,7 @@ boundaries, then re-read every diff:
 sed -i 's/\bold_name\b/new_name/g' <classified.py files...>
 ```
 
-Change nothing else — no reformat, no import sort, no "while I'm here".
+Change nothing else. Do not reformat, sort imports, or make extra edits.
 
 ### 4. Verify
 
@@ -113,7 +114,7 @@ Then:
 - Run the test command; same pass/fail set as before.
 - `python3 -m compileall -q <root>` or import each touched module.
 - `git diff --stat`: file list matches inventory Python files;
-  insertions ≈ deletions.
+  insertions and deletions are roughly balanced.
 
 Print non-Python hits from `rg` as informational for the report.
 
@@ -126,19 +127,20 @@ Use the format below.
 Stop and say why when:
 
 - The new name is already bound under the root.
-- The user bundles a behavior change, recipe XML edit, or compatibility shim —
-  do the rename, hand back the rest as a separate request.
-- The user asks for repo-wide `sed` without an inventory — show non-Python hits
+- The user bundles a behavior change, recipe XML edit, or compatibility shim.
+  Do the rename and hand back the rest as a separate request.
+- The user asks for repo-wide `sed` without an inventory. Show non-Python hits
   first, then proceed per file.
-- An occurrence is outside the root — report the path; do not edit.
-- Tests were red before you started — record which; continue only if unrelated.
-- No test or import check can run — finish the rename; mark verification as
+- An occurrence is outside the root. Report the path and do not edit it.
+- Tests were red before you started. Record which tests failed and continue
+  only if unrelated.
+- No test or import check can run. Finish the rename and mark verification as
   "grep only".
 
 ## Report format
 
 ```markdown
-## Rename: `<old>` → `<new>`
+## Rename: `<old>` to `<new>`
 
 **Kind:** <function | class | constant | method on Class>
 **Behavior change:** none. <signature / defaults / return shape unchanged>
@@ -151,19 +153,19 @@ Stop and say why when:
 | ... | ... | definition / import / attribute / string / out of scope |
 
 ### Files changed (<count>)
-- `path` — what changed
+- `path`. What changed.
 
 ### String occurrences changed (<count>)
-- `path` — which literal, why it is a Python reference
+- `path`. Which literal changed, and why it is a Python reference.
 
 ### Out of scope, unchanged (<count>)
-- `path:line` — what it is, who owns it
+- `path:line`. What it is and who owns it.
 
 ### Verification
-- old-name grep in *.py → 0 hits
-- new-name grep in *.py → <n> hits in <m> files
-- <test command> → <result, same as before>
-- `git diff --stat` → <files>, <+n>/<-n>
+- old-name grep in *.py returned 0 hits
+- new-name grep in *.py returned <n> hits in <m> files
+- <test command> returned <result, same as before>
+- `git diff --stat` returned <files>, <+n>/<-n>
 
 ### Not done
 - no compatibility alias for `<old>`
@@ -172,9 +174,9 @@ Stop and say why when:
 
 ## References and scripts
 
-- `references/call-site-shapes.md` — one before/after illustration per
+- `references/call-site-shapes.md`. One before/after illustration per
   classification-table row (placeholder names only).
-- `scripts/verify_rename.sh` — inspect-only; exit 1 if `<old>` remains in
+- `scripts/verify_rename.sh`. Inspect-only; exit 1 if `<old>` remains in
   `*.py` or `<new>` is absent; prints non-Python hits as informational.
 
 ## Applying in a real checkout
