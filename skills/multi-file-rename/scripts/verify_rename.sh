@@ -1,16 +1,10 @@
 #!/usr/bin/env bash
-# Verify a Python symbol rename is complete. Read-only; edits nothing.
+# Verify a Python symbol rename without editing files.
 #
 # Usage: verify_rename.sh <old_name> <new_name> [root]
 #
-# Exit 0 when:
-#   - no whole-word occurrence of <old_name> remains in any *.py under root
-#   - at least one whole-word occurrence of <new_name> exists in a *.py
-# Exit 1 otherwise, printing the stragglers so they can be fixed by hand.
-#
-# Non-Python hits of <old_name> (recipe XML, YAML, docs) are printed as
-# informational and do not fail the check: they are out of scope for a
-# Python symbol rename and belong in the report's "Out of scope" section.
+# Exit 0 when <old_name> is gone from *.py and <new_name> appears in *.py.
+# Non-Python <old_name> hits are informational.
 set -uo pipefail
 
 if [[ $# -lt 2 ]]; then

@@ -13,8 +13,8 @@ Rename a Python symbol everywhere it is referenced, change nothing else, and
 end with evidence that the old name is gone from Python and that the result
 still runs. Output is a mechanical diff plus a short report.
 
-Wednesday scope: Python symbols only. Do not rename recipe XML step ids,
-recipe keys, or YAML config keys.
+Scope: Python symbols only. Do not rename recipe XML step ids, recipe keys, or
+YAML config keys.
 
 ## When
 
@@ -110,11 +110,7 @@ scripts/verify_rename.sh <old> <new> <root>
 
 Then:
 
-- Clear bytecode caches (`find <root> -name __pycache__ -type d -exec rm -rf {} +`
-  or run Python with `-B`) before importing — same-length renames can leave
-  stale `.pyc` and yield `ImportError: cannot import name <new>`.
 - Run the test command; same pass/fail set as before.
-- Optional cheap end-to-end; compare output before/after.
 - `python3 -m compileall -q <root>` or import each touched module.
 - `git diff --stat`: file list matches inventory Python files;
   insertions ≈ deletions.

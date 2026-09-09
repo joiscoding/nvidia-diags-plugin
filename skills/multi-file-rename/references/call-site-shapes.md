@@ -1,7 +1,7 @@
 # Call-site shapes (illustrative)
 
 Placeholder names only: `old_name` → `new_name`, or `m.old` / `m.new`.
-**ILLUSTRATIVE** snippets — not a gold tree. One shape per classification-table
+These snippets are examples, not a gold tree. One shape per classification-table
 row from `SKILL.md`.
 
 ## Definition — Rename
